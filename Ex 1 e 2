@@ -1,0 +1,86 @@
+/*
+Trabalho II - Análise de Algoritmos
+Aluno(s): Ronaldo Pereira Avansini - 2165578
+          MarcoS Paulo
+          Diego
+Exercícios 1 e 2: Lista de Adjacência + Busca em Largura (G1)
+*/
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <unordered_map>
+#include <vector>
+#include <queue>
+#include <set>
+#include <algorithm>
+
+using namespace std;
+
+class Grafo {
+private:
+    unordered_map<string, vector<string>> adj;
+
+public:
+    void carregarDeArquivo(const string& nomeArquivo) {
+        ifstream arquivo(nomeArquivo);
+        if (!arquivo.is_open()) {
+            cerr << "Erro ao abrir o arquivo: " << nomeArquivo << endl;
+            exit(1);
+        }
+
+        string linha;
+        while (getline(arquivo, linha)) {
+            stringstream ss(linha);
+            string u, v;
+            if (getline(ss, u, ';') && getline(ss, v, ';')) {
+                // Remove qualquer caractere extra
+                u.erase(remove(u.begin(), u.end(), '\r'), u.end());
+                v.erase(remove(v.begin(), v.end(), '\r'), v.end());
+
+                // Inserção bidirecional
+                adj[u].push_back(v);
+                adj[v].push_back(u);
+            }
+        }
+
+        arquivo.close();
+
+        // Ordenar vizinhos em ordem lexicográfica - teste 21
+        for (auto& par : adj) {
+            sort(par.second.begin(), par.second.end());
+        }
+    }
+
+    void buscaEmLargura(const string& inicio) {
+        set<string> visitados;
+        queue<string> fila;
+
+        fila.push(inicio);
+        visitados.insert(inicio);
+
+        cout << "Ordem de visitação (BFS a partir de " << inicio << "): ";
+
+        while (!fila.empty()) {
+            string atual = fila.front();
+            fila.pop();
+            cout << atual << " ";
+
+            for (const string& vizinho : adj[atual]) {
+                if (visitados.find(vizinho) == visitados.end()) {
+                    visitados.insert(vizinho);
+                    fila.push(vizinho);
+                }
+            }
+        }
+
+        cout << endl;
+    }
+};
+
+int main() {
+    Grafo g;
+    g.carregarDeArquivo("g1.txt");
+    g.buscaEmLargura("b");
+    return 0;
+}
