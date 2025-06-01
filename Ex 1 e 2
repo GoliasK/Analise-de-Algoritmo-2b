@@ -82,5 +82,9 @@ int main() {
     Grafo g;
     g.carregarDeArquivo("g1.txt");
     g.buscaEmLargura("b");
+    g.carregarDeArquivo("g2.txt");
+    g.buscaEmLargura("b");
+    g.carregarDeArquivo("g3.txt");
+    g.buscaEmLargura("b");
     return 0;
 }
